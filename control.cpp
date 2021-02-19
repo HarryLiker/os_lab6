@@ -10,7 +10,7 @@
 #include "zmq_functions.h"
 
 int main() {
-    topology network;
+    Topology network;
     std::vector<zmq::socket_t> branches;
     zmq::context_t context;
 
@@ -24,7 +24,7 @@ int main() {
             int node_id, parent_id;
             std::cin >> node_id >> parent_id;
 
-            if (network.find(node_id) != -1) { // Поиск id выч. узла среди существующих
+            if (network.Find(node_id) != -1) { // Поиск id выч. узла среди существующих
                 std::cout << "Error: already exists!\n";
             } else if (parent_id == -1) {
                 pid_t pid = fork(); // Создание дочернего узла
@@ -45,31 +45,31 @@ int main() {
 
                 std::string reply = receive_message(branches[branches.size() - 1]);
                 std::cout << reply << "\n";
-                network.insert(node_id, parent_id);
+                network.Insert(node_id, parent_id);
 
-            } else if (network.find(parent_id) == -1) {
+            } else if (network.Find(parent_id) == -1) {
                 std::cout << "Error: parent not found!\n";
             } else {
-                int branch = network.find(parent_id); 
+                int branch = network.Find(parent_id); 
                 send_message(branches[branch], std::to_string(parent_id) + "create " + std::to_string(node_id));
 
                 std::string reply = receive_message(branches[branch]);
                 std::cout << reply << "\n";
-                network.insert(node_id, parent_id);
+                network.Insert(node_id, parent_id);
             }
         } else if (comand == "remove") {
             int id;
             std::cin >> id;
-            int branch = network.find(id); // Проверка, существует ли узел
+            int branch = network.Find(id); // Проверка, существует ли узел
             if (branch == -1) {
                 std::cout << "Error: incorrect node id!\n";
             } else {
-                bool is_first = (network.get_first_id(branch) == id);
+                bool is_first = (network.GetFirstId(branch) == id);
                 send_message(branches[branch], std::to_string(id) + " remove");
 
                 std::string reply = receive_message(branches[branch]);
                 std::cout << reply << "\n";
-                network.erase(id);
+                network.Erase(id);
                 if (is_first) {
                     unbind(branches[branch], id);
                     branches.erase(branches.begin() + branch);
@@ -79,7 +79,7 @@ int main() {
             int dest_id;
             std::string subcomand;
             std::cin >> dest_id >> subcomand;
-            int branch = network.find(dest_id);
+            int branch = network.Find(dest_id);
             if (branch == -1) {
                 std::cout << "Error: incorrect node id!\n";
             } else {
@@ -98,12 +98,12 @@ int main() {
             int dest_id;
             std::set<int> available_nodes;
             std::cin >> dest_id;
-            if (network.find(dest_id) == -1) {
+            if (network.Find(dest_id) == -1) {
                 std::cout << "Error: Not found!\n";
             } else {
                 int yes = 0;
                 for (int i = 0; i < branches.size(); ++i) {
-                    int first_node_id = network.get_first_id(i);
+                    int first_node_id = network.GetFirstId(i);
                     send_message(branches[i], std::to_string(first_node_id) + " ping");
                     std::string received_message = receive_message(branches[i]);
                     std::istringstream reply(received_message);
@@ -118,7 +118,7 @@ int main() {
             }
         } else if (comand == "exit") {
             for (size_t i = 0; i < branches.size(); ++i) {
-                int first_node_id = network.get_first_id(i);
+                int first_node_id = network.GetFirstId(i);
                 send_message(branches[i], std::to_string(first_node_id) + " remove");
 
                 std::string reply = receive_message(branches[i]);
