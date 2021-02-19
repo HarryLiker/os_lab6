@@ -31,16 +31,19 @@ void connect(zmq::socket_t &socket, int id) {
     socket.connect(adress);
 }
 
+// Отключение клиента
 void disconnect(zmq::socket_t &socket, int id) {
     std::string adress = "tcp://127.0.0.1:" + std::to_string(MAIN_PORT + id);
     socket.disconnect(adress);
 }
 
+// Связка узла с сокетом
 void bind(zmq::socket_t &socket, int id) {
     std::string adress = "tcp://127.0.0.1:" + std::to_string(MAIN_PORT + id);
     socket.bind(adress);
 }
 
+// Освобождение узла от сокета
 void unbind(zmq::socket_t &socket, int id) {
     std::string adress = "tcp://127.0.0.1:" + std::to_string(MAIN_PORT + id);
     socket.unbind(adress);

@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
     auto start_clock = std::chrono::high_resolution_clock::now();
     auto stop_clock = std::chrono::high_resolution_clock::now();
     auto time_clock = 0;
-    bool flag_clock = false;
+    bool flag_clock = false; // Для проверки запущен таймер или нет
 
     while (1) {
         message = receive_message(parent_socket);
@@ -38,7 +38,6 @@ int main(int argc, char *argv[]) {
         int dest_id;
 
         request >> dest_id;
-
         std::string comand;
         request >> comand;
 
@@ -58,7 +57,7 @@ int main(int argc, char *argv[]) {
                     exit(1);
                 }
                 if (pid == 0) {
-                    execl("./comands", "./comands", std::to_string(new_child_id).c_str(), std::to_string(child_id).c_str(), NULL);
+                    execl("./count", "./count", std::to_string(new_child_id).c_str(), std::to_string(child_id).c_str(), NULL);
                     perror("Can't create new process!\n");
                     exit(1);
                 }
@@ -106,8 +105,6 @@ int main(int argc, char *argv[]) {
                         time_clock += std::chrono::duration_cast<std::chrono::milliseconds>(stop_clock - start_clock).count();
                         start_clock = stop_clock;
                     }
-                    //stop_clock = std::chrono::high_resolution_clock::now();
-                    //time_clock += std::chrono::duration_cast<std::chrono::milliseconds>(stop_clock - start_clock).count();
                     msg += ": " + std::to_string(time_clock);
                 }
                 send_message(parent_socket, msg);

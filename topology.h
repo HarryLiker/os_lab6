@@ -8,6 +8,8 @@ private:
     std::list<std::list<int>> container;
 
 public:
+
+    // Добавление нового узла
     void insert(int id, int parent_id) {
         if (parent_id == -1) {
             std::list<int> new_list;
@@ -30,6 +32,7 @@ public:
         }
     }
 
+    // Поиск узла с заданным id в списке списков
     int find(int id) {
         int cur_list_id = 0;
         for (auto it1 = container.begin(); it1 != container.end(); ++it1) {
@@ -43,13 +46,14 @@ public:
         return -1;
     }
 
+    // Удаление узла с указанным id
     void erase(int id) {
         int list_id = find(id);
         if (list_id == -1) {
             throw std::runtime_error("Wrong id");
         }
         auto it1 = container.begin();
-        std::advance(it1, list_id);
+        std::advance(it1, list_id); // Изменяет переданный итератор
         for (auto it2 = it1->begin(); it2 != it1->end(); ++it2) {
             if (*it2 == id) {
                 it1->erase(it2, it1->end());
@@ -61,6 +65,7 @@ public:
         }
     }
 
+    // Получение первого id узла в контейнере
     int get_first_id(int list_id) {
         auto it1 = container.begin();
         std::advance(it1, list_id);

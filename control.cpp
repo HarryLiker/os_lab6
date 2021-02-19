@@ -14,29 +14,20 @@ int main() {
     std::vector<zmq::socket_t> branches;
     zmq::context_t context;
 
-
     std::string comand;
-    //std::string subcomand;
 
-    int child_pid = 0;
-    int child_id = 0;
-
-    int input_id;
     std::string message;
 
-    auto start_heartbeat = std::chrono::high_resolution_clock::now();
-    auto stop_heartbeat = std::chrono::high_resolution_clock::now();
-    auto time_heartbeat = 0;
 
     while (std::cin >> comand) {
         if (comand == "create") {
             int node_id, parent_id;
             std::cin >> node_id >> parent_id;
 
-            if (network.find(node_id) != -1) {
+            if (network.find(node_id) != -1) { // Поиск id выч. узла среди существующих
                 std::cout << "Error: already exists!\n";
             } else if (parent_id == -1) {
-                pid_t pid = fork();
+                pid_t pid = fork(); // Создание дочернего узла
                 if (pid < 0) {
                     perror("Can't create new process!\n");
                     exit(EXIT_FAILURE);
@@ -59,7 +50,7 @@ int main() {
             } else if (network.find(parent_id) == -1) {
                 std::cout << "Error: parent not found!\n";
             } else {
-                int branch = network.find(parent_id);
+                int branch = network.find(parent_id); 
                 send_message(branches[branch], std::to_string(parent_id) + "create " + std::to_string(node_id));
 
                 std::string reply = receive_message(branches[branch]);
@@ -69,7 +60,7 @@ int main() {
         } else if (comand == "remove") {
             int id;
             std::cin >> id;
-            int branch = network.find(id);
+            int branch = network.find(id); // Проверка, существует ли узел
             if (branch == -1) {
                 std::cout << "Error: incorrect node id!\n";
             } else {
@@ -109,7 +100,6 @@ int main() {
             std::cin >> dest_id;
             if (network.find(dest_id) == -1) {
                 std::cout << "Error: Not found!\n";
-                //break;
             } else {
                 int yes = 0;
                 for (int i = 0; i < branches.size(); ++i) {
