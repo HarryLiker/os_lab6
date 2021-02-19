@@ -4,7 +4,7 @@ control:
 	g++ control.cpp -lzmq -o control -Wall -pedantic
 
 comands:
-	g++ comands.cpp -lzmq -o comands -Wall -pedantic
+	g++ count.cpp -lzmq -o count -Wall -pedantic
 
 clean:
-	rm -rf control comands
+	rm -rf control count

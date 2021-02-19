@@ -33,7 +33,7 @@ int main() {
                     exit(EXIT_FAILURE);
                 }
                 if (pid == 0) {
-                    execl("./comands", "./comands", std::to_string(node_id).c_str(), NULL);
+                    execl("./count", "./count", std::to_string(node_id).c_str(), NULL);
                     perror("Can't execute new process!\n");
                     exit(EXIT_FAILURE);
                 }
